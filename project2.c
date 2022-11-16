@@ -53,15 +53,20 @@ void visualizarGrafo(Vertice * verList, Edge * edgeList);
 //Data Tracker;
 Vertice * dataTracker(void);
 
+//Vertice Modifier
+Vertice * verticeModifier(Vertice * list);
+
 
 
 
 int main(){
 	Vertice * list =NULL;
 	int num=0;
-//	list= verticeAdder(list);
-//	list= verticeAdder(list);
-//    list= verticeAdder(list);
+	list= verticeAdder(list);
+	list= verticeAdder(list);
+    list= verticeAdder(list);
+    //list= dataTracker();
+    list= verticeModifier(list);
     list= dataTracker();
 	Edge * edgeList = edgeAdder(NULL,list);
 	edgeList = edgeAdder(edgeList,list);
@@ -331,3 +336,62 @@ Vertice * verticeAddertxt(Vertice *list, struct vertice vertice1){
 	return list;
 	
 }
+
+
+
+Vertice * verticeModifier(Vertice * list){
+	Vertice * aux;
+	char id[16];
+	printf("Type in the ID of the task you want to edit: ");
+	scanf("%s",&id);
+	int index=0;
+	aux=list;
+	while(aux!=NULL){
+		if(strcmp(aux->vertice1.ID,id)==0){
+			printf("\nType in the new Description: ");
+			scanf("%s",&aux->vertice1.description);
+			printf("\nType in the new manager: ");
+			scanf("%s",&aux->vertice1.manager);
+			printf("\nType in the new time: ");
+			scanf("%s",&aux->vertice1.time);
+			printf("\nType in the new type of task: ");
+			scanf("%s",&aux->vertice1.typeOfTask);
+			
+			
+		}
+	//Save the data in the txt
+		FILE *file;
+		if (index==0){
+			file=fopen("tasks.txt","w");
+		}else{
+			file=fopen("tasks.txt","a");
+		}
+		
+		if(file==NULL){
+			printf("Connection Error: Impossible to connect to the txt \n ");
+			return list;
+		}
+		fputs("-------Task--------\n",file);
+		fputs(aux->vertice1.ID,file);
+		fputs("\n",file);
+		fputs(aux->vertice1.description,file);
+		fputs("\n",file);
+		fputs(aux->vertice1.typeOfTask,file);
+		fputs("\n",file);
+		fputs(aux->vertice1.time,file);
+		fputs("\n",file);
+		fputs(aux->vertice1.manager,file);
+		fputs("\n",file);
+		fclose(file);
+		printf("SUCCED MODIFIES APPLIED");
+		aux=aux->next;
+		index++;
+	}
+	
+	return list;
+	
+	
+}
+
+
+
