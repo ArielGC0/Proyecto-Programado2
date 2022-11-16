@@ -18,11 +18,31 @@ struct vertice{
 	
 };
 
+
+//Document structure
+struct document{
+	char ID[10];
+	int rute;
+	char description[90];
+	char type[20];
+};
+//AVS Structure
+
+typedef struct documents{
+	struct document document1;
+	struct documents * leftChild;
+	struct documents * rightChild;
+	struct documents * father;
+	
+	
+}Document;
+
 //Vertice Nodo
 Vertice{
 	struct vertice vertice1;
 	struct nodo * next;
 	Edge * adjacent;
+	Document * documents;
 };
 
 //Edge Nodo
@@ -32,6 +52,9 @@ Edge{
 	struct edge * next;
 	
 };
+
+
+
 
 //FUNCTIONS
 void verticePrinter(Vertice * list);
@@ -56,27 +79,33 @@ Vertice * dataTracker(void);
 //Vertice Modifier
 Vertice * verticeModifier(Vertice * list);
 
+//Document Adder
+Document * documentAdder(Document * list);
 
+//Document printer
+void AVSPrinter(Document * list);
 
 
 int main(){
-	Vertice * list =NULL;
-	int num=0;
-	list= verticeAdder(list);
-	list= verticeAdder(list);
-    list= verticeAdder(list);
-    //list= dataTracker();
-    list= verticeModifier(list);
-    list= dataTracker();
-	Edge * edgeList = edgeAdder(NULL,list);
-	edgeList = edgeAdder(edgeList,list);
-	edgeList = edgeAdder(edgeList,list);
-	verticePrinter(list);
-	
-	visualizarGrafo(list, edgeList);
-	
-		
-	
+//	Vertice * list =NULL;
+//	int num=0;
+//	list= verticeAdder(list);
+//	list= verticeAdder(list);
+//    list= verticeAdder(list);
+//    //list= dataTracker();
+//    list= verticeModifier(list);
+//    list= dataTracker();
+//	Edge * edgeList = edgeAdder(NULL,list);
+//	edgeList = edgeAdder(edgeList,list);
+//	edgeList = edgeAdder(edgeList,list);
+//	verticePrinter(list);
+//	
+//	visualizarGrafo(list, edgeList);
+
+	Document * 	list=NULL;
+	list=documentAdder(list);
+	list= documentAdder(list);
+	AVSPrinter(list);
 	
 	return 0;
 }
@@ -127,6 +156,7 @@ Vertice * verticeAdder(Vertice * list){
 		list->vertice1=vertice1;
 		list->adjacent=NULL;
 		list->next=NULL;
+		list->documents=NULL;
 	}else{
 		//search for the last item of the vertice list
 		aux=list;
@@ -138,6 +168,7 @@ Vertice * verticeAdder(Vertice * list){
 		aux->next->vertice1=vertice1;
 		aux->next->next=NULL;
 		aux->next->adjacent=NULL;
+		aux->next->documents=NULL;
 	}
 	
 	return list;
@@ -270,41 +301,55 @@ void visualizarGrafo(Vertice * verList, Edge * edgeList){
 
 
 Vertice * dataTracker(void){
+	//Creation of the variable type FILE
 	FILE * file;
+	//Open the file in reading mode
 	file= fopen("tasks.txt","r");
+	//Creation of the variable type vertice
 	Vertice * newVertice=NULL;
+	//Roam of every line of the file
 	while(feof(file)==0){
+		//Creation of variables 
 		struct vertice vertice1;
 		char task[90];
 		int numero=1;
+		//Get the first line that is innecesary
 		fgets(task,90,file);
+		//Search of every element for the Data structure
 		while(numero<6){
+			//ID
 			if (numero==1){
 				fgets(vertice1.ID,5,file);
 				vertice1.ID[strlen(vertice1.ID) - 1] = '\0';
 			}
+			//Description
 			if(numero==2){
 				fgets(vertice1.description,90,file);
 				vertice1.description[strlen(vertice1.description) - 1] = '\0';
 			}
+			//Type of task 
 			if(numero==3){
 				fgets(vertice1.typeOfTask,20,file);
 				vertice1.typeOfTask[strlen(vertice1.typeOfTask) - 1] = '\0';
 			}
+			//Time
 			if(numero==4){
 				fgets(vertice1.time,20,file);
 				vertice1.time[strlen(vertice1.time) - 1] = '\0';
 			}
+			//Manager
 			if(numero==5){
 				fgets(vertice1.manager,90,file);
 				vertice1.manager[strlen(vertice1.manager) - 1] = '\0';
 			}
 			numero++;
 		}
+		//Adder to the list
 		newVertice = verticeAddertxt(newVertice,vertice1);
 		
-		printf("End route succed");
+	
 	}
+	//Close of the file when all the insertions are made
 	fclose(file);
 	
 	return newVertice;
@@ -316,7 +361,9 @@ Vertice * dataTracker(void){
 Vertice * verticeAddertxt(Vertice *list, struct vertice vertice1){
 	Vertice * aux;
 	if(list==NULL){
+		//Assignation of the memory
 		list=(Vertice*)malloc(sizeof(Vertice));
+		//Asignation of the structure
 		list->vertice1=vertice1;
 		list->adjacent=NULL;
 		list->next=NULL;
@@ -340,14 +387,20 @@ Vertice * verticeAddertxt(Vertice *list, struct vertice vertice1){
 
 
 Vertice * verticeModifier(Vertice * list){
+	//Creation of the variables
 	Vertice * aux;
 	char id[16];
+	//Search the task by ID
 	printf("Type in the ID of the task you want to edit: ");
 	scanf("%s",&id);
+	//Creation of the index to rewrite the txt file
 	int index=0;
 	aux=list;
+	//Roam of all the list 
 	while(aux!=NULL){
+		//Search for the ID entered
 		if(strcmp(aux->vertice1.ID,id)==0){
+			//Ask for the new changed descriptions
 			printf("\nType in the new Description: ");
 			scanf("%s",&aux->vertice1.description);
 			printf("\nType in the new manager: ");
@@ -361,16 +414,19 @@ Vertice * verticeModifier(Vertice * list){
 		}
 	//Save the data in the txt
 		FILE *file;
+		//If is the first element the txt is rewrited
 		if (index==0){
 			file=fopen("tasks.txt","w");
+		//If is not the first element it just add the element
 		}else{
 			file=fopen("tasks.txt","a");
 		}
-		
+		//Verification of the Conecction with the file
 		if(file==NULL){
 			printf("Connection Error: Impossible to connect to the txt \n ");
 			return list;
 		}
+		//Add the elements
 		fputs("-------Task--------\n",file);
 		fputs(aux->vertice1.ID,file);
 		fputs("\n",file);
@@ -383,7 +439,6 @@ Vertice * verticeModifier(Vertice * list){
 		fputs(aux->vertice1.manager,file);
 		fputs("\n",file);
 		fclose(file);
-		printf("SUCCED MODIFIES APPLIED");
 		aux=aux->next;
 		index++;
 	}
@@ -394,4 +449,109 @@ Vertice * verticeModifier(Vertice * list){
 }
 
 
+
+//AVS FUNCTIONS
+
+
+Document * documentAdder(Document * list){
+	Document *aux,* father;
+	struct document document1;
+	printf("\n Type in the ID of the Document: ");
+	scanf("%s",&document1.ID);
+	printf("\n Enter the route of the Document: ");
+	scanf("%d",&document1.rute);
+	printf("\n Enter the description of the Document: ");
+	scanf("%s",&document1.description);
+	printf("\n Type in the type of the Document");
+	scanf("%s",&document1.type);
+	
+	
+	FILE * file;
+	file = fopen("documents.txt","a");
+	if(file==NULL){
+		printf("\n Connection Error: Impossible to connect to the txt \n ");
+		return list;
+	}
+	fputs("-------Document--------\n",file);
+	fputs(document1.ID,file);
+	fputs("\n",file);
+//	fputs(document1.rute,file);
+//	fputs("\n",file);
+	fputs(document1.description,file);
+	fputs("\n",file);
+	fputs(document1.type,file);
+	fputs("\n",file);
+	fclose(file);
+	
+	if(list==NULL){
+		list= (Document*)malloc(sizeof(Document));
+		list->document1=document1;
+		list->leftChild=NULL;
+		list->rightChild=NULL;
+		list->father=NULL;
+	}else{
+		aux=list;
+		while(aux!=NULL){
+			if(aux->leftChild==NULL&& aux->rightChild==NULL){
+				father=aux;
+			}
+			if(aux->document1.rute>document1.rute){
+				aux=aux->leftChild;
+				printf("Es menor ");
+			}else{
+				aux=aux->rightChild;
+				printf("Es mayor");
+			}
+		}
+		aux=(Document*)malloc(sizeof(Document));
+		aux->document1=document1;
+		aux->leftChild=NULL;
+		aux->rightChild=NULL;
+		aux->father=father;
+		
+		
+		
+	}
+	
+	
+	return list;
+	
+}
+
+
+void AVSPrinter(Document * list){
+	Document * aux,*auxFather;
+	if(list==NULL){
+		printf("\nError: There is not any documents to print\n ");
+		
+	}
+	aux=list;
+	auxFather=list;
+	while(aux!=NULL){
+		printf("-------------------\n");
+		printf("Welcome to the printer of trees\n");
+		printf("ID of the document: %s \n",aux->document1.ID);
+		printf("-------------------\n");
+		printf("De la izquierda %s", aux->leftChild->document1.ID);
+
+		if(aux->leftChild==NULL&& aux->rightChild==NULL){
+				aux=aux->father;
+				continue;
+		}
+		if(aux->leftChild!=NULL){
+			aux=aux->leftChild;
+			continue;
+		}
+		if(aux->rightChild!=NULL){
+			aux=aux->rightChild;
+			continue;
+		}
+		if(aux->father==NULL){
+			break;
+		}
+			
+		
+	}
+	
+}
 
