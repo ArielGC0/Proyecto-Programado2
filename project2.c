@@ -469,6 +469,7 @@ Document * documentAdder(Document * list){
 	//Creation of the varibles
 	Document *aux,* father;
 	struct document document1;
+	//Getting the neccesary data for the structure
 	printf("\n Type in the ID of the Document: ");
 	scanf("%s",&document1.ID);
 	printf("\n Enter the route of the Document: ");
@@ -478,65 +479,94 @@ Document * documentAdder(Document * list){
 	printf("\n Type in the type of the Document");
 	scanf("%s",&document1.type);
 	
-	
+	//Creating the file of the librarie FILE
 	FILE * file;
+	//Openin the txt 
 	file = fopen("documents.txt","a");
+	
+	//File validation
 	if(file==NULL){
 		printf("\n Connection Error: Impossible to connect to the txt \n ");
 		return list;
 	}
+	//Entering the elements in the file
 	fputs("-------Document--------\n",file);
 	fputs(document1.ID,file);
 	fputs("\n",file);
+	//Creation of a char variable
 	char rute[10];
+	//Convertion of a int to char 
 	sprintf(rute, "%d", document1.rute);
 	fputs(rute,file);
 	fputs("\n",file);
+	//Putting the rest of elements in the file
 	fputs(document1.description,file);
 	fputs("\n",file);
 	fputs(document1.type,file);
 	fputs("\n",file);
 	fclose(file);
 	
+	//Validating if the list is empty
 	if (list==NULL){
+		// Assignation of memory
 		list= (Document*)malloc(sizeof(Document));
+		//assignation of the structure in the data structure
 		list->document1=document1;
+		//Assignation of the Left, right and father Nodos
 		list->leftChild=NULL;
 		list->rightChild=NULL;
 		list->father=NULL;
-		list->document1.visited=0;
+	//if the list is not empty
 	}else{
+		//The auxiliar is going to roam the list
 		aux=list;
+		//Variable to make a validation later 
 		int numero;
+		//Checking if the rightChild and the left Child next one are NULL to stop the cycle
 		while(aux->leftChild!=NULL&& aux->rightChild!=NULL){
-
+			//validation of size of the rute to make the tree
+			//Smaller left
 			if(aux->document1.rute>document1.rute){
+				//We continue using the left side
 				aux=aux->leftChild;
+				//The number is assigned to 0, that means left side
 				numero=0;
 				printf("Es menor ");
+			//Any other case right
 			}else{
+				//Keep using the right side
 				aux=aux->rightChild;
+				//The number is assigned to 1, that means right side
 				numero=1;
 				printf("Es mayor");
 			}
 		}
+		//Validation of the number to see what side is the new element inside of
 		if(numero==0){
+			//Assignation of memory
 			aux->leftChild=(Document*)malloc(sizeof(Document));
+			//Assignation of memory
 			aux->leftChild->document1=document1;
+			//Assignation of the following  left and  right to NULL
 			aux->leftChild->leftChild=NULL;
-			aux->leftChild->rightChild=NULL;
+			aux->leftChild->rightChild=NULL; 
 			aux->rightChild=NULL;
+			//The Father is assigned to be the auxiliar
 			aux->leftChild->father=aux;
-			aux->leftChild->document1.visited=0;
+			
 		}
 		if(numero==1){
+			//Assignation of memory
 			aux->rightChild=(Document*)malloc(sizeof(Document));
+			//Assignation of memory
 			aux->rightChild->document1=document1;
+			//Assignation of the following  left and  right to NULL
 			aux->rightChild->leftChild=NULL;
 			aux->rightChild->rightChild=NULL;
 			aux->leftChild=NULL;
+			//The Father is assigned to be the auxiliar
 			aux->rightChild->father=aux;
-			aux->rightChild->document1.visited=0;
+			
 		}
 		
 		
@@ -549,8 +579,11 @@ Document * documentAdder(Document * list){
 
 
 void AVSPrinter(Document * list){
+	//Validating if the list is empty
     if (list != NULL) {
+    	//Using recursion to see the left childs of the tree
         AVSPrinter(list->leftChild);
+        //Series of prints that shows the tree
         printf("-------------------\n");
 		printf("Welcome to the printer of trees\n");
 		printf("ID of the document: %s \n",list->document1.ID);
@@ -558,20 +591,25 @@ void AVSPrinter(Document * list){
 		printf("ID of the right Child: %s \n",list->rightChild->document1.ID);
 		printf("ID of the left child: %s \n",list->leftChild->document1.ID);
 		printf("-------------------\n");
+		//Using recursion to see the right childs of the tree
         AVSPrinter(list->rightChild);
     }
 }
 
 
 void DocumentPrinter(Document * list){
+	//Validating if the list is empty
 	    if (list != NULL) {
+	    	//Using recursion to see the left childs of the tree
 	        DocumentPrinter(list->leftChild);
+	        //Series of prints that shows the tree
 	        printf("-------------------\n");
 			printf("Welcome to the printer of documents \n");
 			printf("ID of the document: %s \n",list->document1.ID);
 			printf("Description of the document: %s \n",list->document1.description);
 			printf("Rute of the document: %d \n",list->document1.rute);
 			printf("Type of the documented: %s \n",list->document1.type);
+			//Using recursion to see the right childs of the tree
 			printf("-------------------\n");
 	        DocumentPrinter(list->rightChild);
     }
@@ -582,10 +620,15 @@ void DocumentPrinter(Document * list){
 	
 
 Document * documentInserter(Document * list, struct document document1){
+	//Creation of variables
 	Document* aux;
+	//Validating if the list is empty
 	if (list==NULL){
+		//Assignation of the memory
 		list= (Document*)malloc(sizeof(Document));
+		//Assignation of the structure to the data structure
 		list->document1=document1;
+		//Left child , right child and father assigned to   NULL
 		list->leftChild=NULL;
 		list->rightChild=NULL;
 		list->father=NULL;
@@ -732,58 +775,79 @@ Document * documentTracker(void){
 	
 
 Document * documentMenu(Document * document){
+	//Prints of the system
 	printf("-------------------------\n ");
 	printf("Welcome to the Document System\n");
 	printf("-------------------------\n ");
+	//int variable
 	int numero=0;
 	while(numero==0){
+		//int variable
 		int value;
+		//prints that shows the user what it can do 
 		printf("If you had a problema and need to restore the document data please type in 1 \n");
 		printf("If you want to add new documents to the existing documents, please type in 2 \n");
 		printf("If you want to modifie any existing documents, please type in 3 \n");
 		printf("If you want to show all the existing documents please type in 4 \n");
 		printf("If you want to exit please type in 5: ");
+		//Recolection of the data
 		scanf("%d",&value);
+		//validating the opcion 1 track the documents from txt file
 		if(value==1){
+			//prints 
 			printf("-------------------------\n ");
 			printf("Welcome to the Tracker System");
+			//Calling the function document tracker
 			document= documentTracker();
+			//Validating the status of the documents
 			if(document==NULL){
 				printf("\n Error: The Document is empty try adding some documents ");
 			}
 			printf("-------------------------\n ");
 		}
+		//Validating second option add a document
 		if(value==2){
 			printf("-------------------------\n ");
+			//Calling the function documentAdder
 			document= documentAdder(document);
 			printf("-------------------------\n ");
 		}
+		//Validation option 3 Modificate a document
 		if(value==3){
+			//Variables
 			char ID[10];
+			//Getting the ID for the modifications
 			printf("-------------------------\n ");
 			printf("Please type in the ID of the Document you want to modifie: ");
 			scanf("%s",&ID);
 			printf("-------------------------\n ");
+			//caling the DocumentModifier
 			document= documentModifier(document, ID);
+			//Calling the documentModifierTXT
 			documentModifierTXT(document,0);
 		}
+		//Validation the option 4 The document printer and the tree printer
 		if(value==4){
 			printf("-------------------------\n ");
 			printf("Welcome to the Document Printer \n");
+			//Calling the function document printer
 			DocumentPrinter(document);
 			printf("-------------------------\n ");
 			
 			printf("\n -------------------------\n ");
 			printf("Welcome to the AVS printer of the documents\n");
+			//Caling the AVSPrinter 
 			AVSPrinter(document);
 			printf("-------------------------\n ");
 			
 		}
-		
+		//Validating the 5 option Exiting
 		if(value==5){
+			//Break the cycle 
 			break;
 		}
 	}
+	//return the AVS of documents
 	return document;
 	
 }
