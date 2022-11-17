@@ -25,6 +25,7 @@ struct document{
 	int rute;
 	char description[90];
 	char type[20];
+	int visited;
 };
 //AVS Structure
 
@@ -33,6 +34,7 @@ typedef struct documents{
 	struct documents * leftChild;
 	struct documents * rightChild;
 	struct documents * father;
+	
 	
 	
 }Document;
@@ -84,7 +86,13 @@ Document * documentAdder(Document * list);
 
 //Document printer
 void AVSPrinter(Document * list);
+void DocumentPrinter(Document * list);
 
+//Document Modiffier
+Document * documentModifier(Document * list, char id[]);
+
+//Document Menu
+Document * documentMenu(Document * document);
 
 int main(){
 //	Vertice * list =NULL;
@@ -102,10 +110,14 @@ int main(){
 //	
 //	visualizarGrafo(list, edgeList);
 
-	Document * 	list=NULL;
-	list=documentAdder(list);
-	list= documentAdder(list);
-	AVSPrinter(list);
+//	Document * 	list=NULL;
+//	list=documentAdder(list);
+//	list= documentAdder(list);
+//	list = documentModifier(list, "123");
+//	AVSPrinter(list);
+//	DocumentPrinter(list);
+	documentMenu(NULL);
+	
 	
 	return 0;
 }
@@ -454,6 +466,7 @@ Vertice * verticeModifier(Vertice * list){
 
 
 Document * documentAdder(Document * list){
+	//Creation of the varibles
 	Document *aux,* father;
 	struct document document1;
 	printf("\n Type in the ID of the Document: ");
@@ -475,40 +488,56 @@ Document * documentAdder(Document * list){
 	fputs("-------Document--------\n",file);
 	fputs(document1.ID,file);
 	fputs("\n",file);
-//	fputs(document1.rute,file);
-//	fputs("\n",file);
+	char rute[10];
+	sprintf(rute, "%d", document1.rute);
+	fputs(rute,file);
+	fputs("\n",file);
 	fputs(document1.description,file);
 	fputs("\n",file);
 	fputs(document1.type,file);
 	fputs("\n",file);
 	fclose(file);
 	
-	if(list==NULL){
+	if (list==NULL){
 		list= (Document*)malloc(sizeof(Document));
 		list->document1=document1;
 		list->leftChild=NULL;
 		list->rightChild=NULL;
 		list->father=NULL;
+		list->document1.visited=0;
 	}else{
 		aux=list;
-		while(aux!=NULL){
-			if(aux->leftChild==NULL&& aux->rightChild==NULL){
-				father=aux;
-			}
+		int numero;
+		while(aux->leftChild!=NULL&& aux->rightChild!=NULL){
+
 			if(aux->document1.rute>document1.rute){
 				aux=aux->leftChild;
+				numero=0;
 				printf("Es menor ");
 			}else{
 				aux=aux->rightChild;
+				numero=1;
 				printf("Es mayor");
 			}
 		}
-		aux=(Document*)malloc(sizeof(Document));
-		aux->document1=document1;
-		aux->leftChild=NULL;
-		aux->rightChild=NULL;
-		aux->father=father;
-		
+		if(numero==0){
+			aux->leftChild=(Document*)malloc(sizeof(Document));
+			aux->leftChild->document1=document1;
+			aux->leftChild->leftChild=NULL;
+			aux->leftChild->rightChild=NULL;
+			aux->rightChild=NULL;
+			aux->leftChild->father=aux;
+			aux->leftChild->document1.visited=0;
+		}
+		if(numero==1){
+			aux->rightChild=(Document*)malloc(sizeof(Document));
+			aux->rightChild->document1=document1;
+			aux->rightChild->leftChild=NULL;
+			aux->rightChild->rightChild=NULL;
+			aux->leftChild=NULL;
+			aux->rightChild->father=aux;
+			aux->rightChild->document1.visited=0;
+		}
 		
 		
 	}
@@ -520,38 +549,241 @@ Document * documentAdder(Document * list){
 
 
 void AVSPrinter(Document * list){
-	Document * aux,*auxFather;
-	if(list==NULL){
-		printf("\nError: There is not any documents to print\n ");
-		
-	}
-	aux=list;
-	auxFather=list;
-	while(aux!=NULL){
-		printf("-------------------\n");
+    if (list != NULL) {
+        AVSPrinter(list->leftChild);
+        printf("-------------------\n");
 		printf("Welcome to the printer of trees\n");
-		printf("ID of the document: %s \n",aux->document1.ID);
+		printf("ID of the document: %s \n",list->document1.ID);
+		printf("ID of the father: %s \n",list->father->document1.ID);
+		printf("ID of the right Child: %s \n",list->rightChild->document1.ID);
+		printf("ID of the left child: %s \n",list->leftChild->document1.ID);
 		printf("-------------------\n");
-		printf("De la izquierda %s", aux->leftChild->document1.ID);
+        AVSPrinter(list->rightChild);
+    }
+}
 
-		if(aux->leftChild==NULL&& aux->rightChild==NULL){
-				aux=aux->father;
-				continue;
-		}
-		if(aux->leftChild!=NULL){
-			aux=aux->leftChild;
-			continue;
-		}
-		if(aux->rightChild!=NULL){
-			aux=aux->rightChild;
-			continue;
-		}
-		if(aux->father==NULL){
-			break;
-		}
-			
-		
-	}
+
+void DocumentPrinter(Document * list){
+	    if (list != NULL) {
+	        DocumentPrinter(list->leftChild);
+	        printf("-------------------\n");
+			printf("Welcome to the printer of documents \n");
+			printf("ID of the document: %s \n",list->document1.ID);
+			printf("Description of the document: %s \n",list->document1.description);
+			printf("Rute of the document: %d \n",list->document1.rute);
+			printf("Type of the documented: %s \n",list->document1.type);
+			printf("-------------------\n");
+	        DocumentPrinter(list->rightChild);
+    }
 	
 }
 
+
+	
+
+Document * documentInserter(Document * list, struct document document1){
+	Document* aux;
+	if (list==NULL){
+		list= (Document*)malloc(sizeof(Document));
+		list->document1=document1;
+		list->leftChild=NULL;
+		list->rightChild=NULL;
+		list->father=NULL;
+	}else{
+		aux=list;
+		int numero;
+		while(aux->leftChild!=NULL&& aux->rightChild!=NULL){
+
+			if(aux->document1.rute>document1.rute){
+				aux=aux->leftChild;
+				numero=0;
+				printf("Es menor ");
+			}else{
+				aux=aux->rightChild;
+				numero=1;
+				printf("Es mayor");
+			}
+		}
+		if(numero==0){
+			aux->leftChild=(Document*)malloc(sizeof(Document));
+			aux->leftChild->document1=document1;
+			aux->leftChild->leftChild=NULL;
+			aux->leftChild->rightChild=NULL;
+			aux->rightChild=NULL;
+			aux->leftChild->father=aux;
+		}
+		if(numero==1){
+			aux->rightChild=(Document*)malloc(sizeof(Document));
+			aux->rightChild->document1=document1;
+			aux->rightChild->leftChild=NULL;
+			aux->rightChild->rightChild=NULL;
+			aux->leftChild=NULL;
+			aux->rightChild->father=aux;
+			
+		}
+		
+	return list;
+
+}
+}
+
+Document * documentModifier(Document * list, char id[]){
+		
+	    if (list != NULL) {
+	        documentModifier(list->leftChild,id);
+	        documentModifier(list->rightChild,id);
+		     if(strcmp(list->document1.ID,id)==0){
+				printf("---------------\n");
+				printf("Welcome to the modifier of Documents \n");
+				printf("You are about to modifie the Document with ID: %s \n",id);
+				printf("\n Type in the new Description: ");
+				scanf("%s",&list->document1.description);
+				printf("\n Type in the new route: ");
+				scanf("%d",&list->document1.rute);
+				printf("\n Type in the new type: ");
+				scanf("%s",&list->document1.type);
+				printf("---------------\n");
+				
+			}
+			
+		if(list->father==NULL){
+			return list;
+		}
+	        
+    }
+}
+
+void documentModifierTXT(Document * list,int value){
+	if(list!=NULL){
+		FILE * file;
+		if(value==0){
+			file = fopen("documents.txt","w");
+		}else{
+			file=fopen("documents.txt","a");
+		}
+		fputs("-------Document--------\n",file);
+		fputs(list->document1.ID,file);
+		fputs("\n",file);
+		char rute[10];
+		sprintf(rute, "%d", list->document1.rute);
+		fputs(rute,file);
+		fputs("\n",file);
+		fputs(list->document1.description,file);
+		fputs("\n",file);
+		fputs(list->document1.type,file);
+		fputs("\n",file);
+		fclose(file);
+		documentModifierTXT(list->leftChild,value++);
+		documentModifierTXT(list->leftChild,value++);
+	}
+}
+
+
+Document * documentTracker(void){
+	FILE * file;
+	//Open the file in reading mode
+	file= fopen("documents.txt","r");
+	//Creation of the variable type vertice
+	Document * newDocument=NULL;
+	//Roam of every line of the file
+	while(feof(file)==0){
+		//Creation of variables 
+		struct document document1;
+		char document[90];
+		int numero=1;
+		//Get the first line that is innecesary
+		fgets(document,90,file);
+		//Search of every element for the Data structure
+		while(numero<4){
+			//ID
+			if (numero==1){
+				fgets(document1.ID,10,file);
+				document1.ID[strlen(document1.ID) - 1] = '\0';
+			}
+			//Description
+			if(numero==2){
+				char rute[10];
+				
+				fgets(rute,10,file);
+				document1.rute=atoi(rute);
+			}
+			if(numero==3){
+				fgets(document1.description,90,file);
+				document1.description[strlen(document1.description) - 1] = '\0';
+			}
+			//Type of task 
+			if(numero==4){
+				fgets(document1.type,20,file);
+				document1.type[strlen(document1.type) - 1] = '\0';
+			}
+			numero++;
+		}
+		//Adder to the list
+		newDocument = documentInserter(newDocument,document1);
+		
+	
+	}
+	//Close of the file when all the insertions are made
+	fclose(file);
+	
+	return newDocument;
+		
+}
+	
+
+Document * documentMenu(Document * document){
+	printf("-------------------------\n ");
+	printf("Welcome to the Document System\n");
+	printf("-------------------------\n ");
+	int numero=0;
+	while(numero==0){
+		int value;
+		printf("If you had a problema and need to restore the document data please type in 1 \n");
+		printf("If you want to add new documents to the existing documents, please type in 2 \n");
+		printf("If you want to modifie any existing documents, please type in 3 \n");
+		printf("If you want to show all the existing documents please type in 4 \n");
+		printf("If you want to exit please type in 5: ");
+		scanf("%d",&value);
+		if(value==1){
+			printf("-------------------------\n ");
+			printf("Welcome to the Tracker System");
+			document= documentTracker();
+			if(document==NULL){
+				printf("\n Error: The Document is empty try adding some documents ");
+			}
+			printf("-------------------------\n ");
+		}
+		if(value==2){
+			printf("-------------------------\n ");
+			document= documentAdder(document);
+			printf("-------------------------\n ");
+		}
+		if(value==3){
+			char ID[10];
+			printf("-------------------------\n ");
+			printf("Please type in the ID of the Document you want to modifie: ");
+			scanf("%s",&ID);
+			printf("-------------------------\n ");
+			document= documentModifier(document, ID);
+			documentModifierTXT(document,0);
+		}
+		if(value==4){
+			printf("-------------------------\n ");
+			printf("Welcome to the Document Printer \n");
+			DocumentPrinter(document);
+			printf("-------------------------\n ");
+			
+			printf("\n -------------------------\n ");
+			printf("Welcome to the AVS printer of the documents\n");
+			AVSPrinter(document);
+			printf("-------------------------\n ");
+			
+		}
+		
+		if(value==5){
+			break;
+		}
+	}
+	return document;
+	
+}
