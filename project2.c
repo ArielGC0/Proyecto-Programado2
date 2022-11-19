@@ -83,6 +83,7 @@ Vertice * verticeModifier(Vertice * list);
 
 //Document Adder
 Document * documentAdder(Document * list);
+Document *nuevoNodo(struct document document1);
 
 //Document printer
 void AVSPrinter(Document * list);
@@ -490,7 +491,7 @@ Document * documentAdder(Document * list){
 		return list;
 	}
 	//Entering the elements in the file
-	fputs("-------Document--------\n",file);
+	fputs("\n-------Document--------\n",file);
 	fputs(document1.ID,file);
 	fputs("\n",file);
 	//Creation of a char variable
@@ -503,11 +504,12 @@ Document * documentAdder(Document * list){
 	fputs(document1.description,file);
 	fputs("\n",file);
 	fputs(document1.type,file);
-	fputs("\n",file);
+	//fputs("\n",file);
 	fclose(file);
 	
 	//Validating if the list is empty
 	if (list==NULL){
+		printf("ENTERS THE IF");
 		// Assignation of memory
 		list= (Document*)malloc(sizeof(Document));
 		//assignation of the structure in the data structure
@@ -520,26 +522,49 @@ Document * documentAdder(Document * list){
 	}else{
 		//The auxiliar is going to roam the list
 		aux=list;
+		printf("ENTERS THE ELSE");
 		//Variable to make a validation later 
 		int numero;
 		//Checking if the rightChild and the left Child next one are NULL to stop the cycle
+		
 		while(aux->leftChild!=NULL&& aux->rightChild!=NULL){
 			//validation of size of the rute to make the tree
 			//Smaller left
+			printf("The number is %d \n ",aux->document1.rute);
 			if(aux->document1.rute>document1.rute){
-				//We continue using the left side
-				aux=aux->leftChild;
-				//The number is assigned to 0, that means left side
 				numero=0;
-				printf("Es menor ");
-			//Any other case right
-			}else{
-				//Keep using the right side
-				aux=aux->rightChild;
-				//The number is assigned to 1, that means right side
+				if(aux->leftChild==NULL)break;
+				aux=aux->leftChild;
+			
+			}else {
 				numero=1;
-				printf("Es mayor");
+				if(aux->rightChild==NULL)break;
+				aux=aux->rightChild;
 			}
+			
+			
+//			if(aux->document1.rute>document1.rute){
+//				printf("Enters the second if");
+//				//We continue using the left side
+//				aux=aux->leftChild;
+//				//The number is assigned to 0, that means left side
+//				numero=0;
+//				printf("Es menor ");
+//			//Any other case right
+//			}else{
+//				//Keep using the right side
+//				aux=aux->rightChild;
+//				//The number is assigned to 1, that means right side
+//				numero=1;
+//				printf("Es mayor");
+//			}
+		}
+		if(aux->document1.rute>document1.rute){
+			numero=0;
+			printf("Es menor");
+		}else {
+			printf("Es mayor");
+			numero=1;
 		}
 		//Validation of the number to see what side is the new element inside of
 		if(numero==0){
@@ -550,7 +575,7 @@ Document * documentAdder(Document * list){
 			//Assignation of the following  left and  right to NULL
 			aux->leftChild->leftChild=NULL;
 			aux->leftChild->rightChild=NULL; 
-			aux->rightChild=NULL;
+			//aux->rightChild=NULL;
 			//The Father is assigned to be the auxiliar
 			aux->leftChild->father=aux;
 			
@@ -563,7 +588,7 @@ Document * documentAdder(Document * list){
 			//Assignation of the following  left and  right to NULL
 			aux->rightChild->leftChild=NULL;
 			aux->rightChild->rightChild=NULL;
-			aux->leftChild=NULL;
+			//aux->leftChild=NULL;
 			//The Father is assigned to be the auxiliar
 			aux->rightChild->father=aux;
 			
@@ -577,6 +602,16 @@ Document * documentAdder(Document * list){
 	
 }
 
+Document *nuevoNodo(struct document document1) {
+    // Solicitar memoria
+    Document  *nodo = (Document *) malloc(sizeof(Document));
+    // Asignar el dato e iniciar hojas
+    nodo->document1 = document1;
+    nodo->leftChild = nodo->rightChild = NULL;
+    return nodo;
+}
+
+
 
 void AVSPrinter(Document * list){
 	//Validating if the list is empty
@@ -587,7 +622,7 @@ void AVSPrinter(Document * list){
         printf("-------------------\n");
 		printf("Welcome to the printer of trees\n");
 		printf("ID of the document: %s \n",list->document1.ID);
-		printf("ID of the father: %s \n",list->father->document1.ID);
+		//printf("ID of the father: %s \n",list->father->document1.ID);
 		printf("ID of the right Child: %s \n",list->rightChild->document1.ID);
 		printf("ID of the left child: %s \n",list->leftChild->document1.ID);
 		printf("-------------------\n");
@@ -623,52 +658,101 @@ Document * documentInserter(Document * list, struct document document1){
 	//Creation of variables
 	Document* aux;
 	//Validating if the list is empty
+	//Validating if the list is empty
 	if (list==NULL){
-		//Assignation of the memory
+		printf("ENTERS THE IF");
+		// Assignation of memory
 		list= (Document*)malloc(sizeof(Document));
-		//Assignation of the structure to the data structure
+		//assignation of the structure in the data structure
 		list->document1=document1;
-		//Left child , right child and father assigned to   NULL
+		//Assignation of the Left, right and father Nodos
 		list->leftChild=NULL;
 		list->rightChild=NULL;
 		list->father=NULL;
+	//if the list is not empty
 	}else{
+		//The auxiliar is going to roam the list
 		aux=list;
+		printf("ENTERS THE ELSE");
+		//Variable to make a validation later 
 		int numero;
+		//Checking if the rightChild and the left Child next one are NULL to stop the cycle
+		
 		while(aux->leftChild!=NULL&& aux->rightChild!=NULL){
-
+			//validation of size of the rute to make the tree
+			//Smaller left
+			printf("The number is %d \n ",aux->document1.rute);
 			if(aux->document1.rute>document1.rute){
-				aux=aux->leftChild;
 				numero=0;
-				printf("Es menor ");
-			}else{
-				aux=aux->rightChild;
+				if(aux->leftChild==NULL)break;
+				aux=aux->leftChild;
+			
+			}else {
 				numero=1;
-				printf("Es mayor");
+				if(aux->rightChild==NULL)break;
+				aux=aux->rightChild;
 			}
+			
+			
+//			if(aux->document1.rute>document1.rute){
+//				printf("Enters the second if");
+//				//We continue using the left side
+//				aux=aux->leftChild;
+//				//The number is assigned to 0, that means left side
+//				numero=0;
+//				printf("Es menor ");
+//			//Any other case right
+//			}else{
+//				//Keep using the right side
+//				aux=aux->rightChild;
+//				//The number is assigned to 1, that means right side
+//				numero=1;
+//				printf("Es mayor");
+//			}
 		}
+		if(aux->document1.rute>document1.rute){
+			numero=0;
+			printf("Es menor");
+		}else {
+			printf("Es mayor");
+			numero=1;
+		}
+		//Validation of the number to see what side is the new element inside of
 		if(numero==0){
+			//Assignation of memory
 			aux->leftChild=(Document*)malloc(sizeof(Document));
+			//Assignation of memory
 			aux->leftChild->document1=document1;
+			//Assignation of the following  left and  right to NULL
 			aux->leftChild->leftChild=NULL;
-			aux->leftChild->rightChild=NULL;
-			aux->rightChild=NULL;
+			aux->leftChild->rightChild=NULL; 
+			//aux->rightChild=NULL;
+			//The Father is assigned to be the auxiliar
 			aux->leftChild->father=aux;
+			
 		}
 		if(numero==1){
+			//Assignation of memory
 			aux->rightChild=(Document*)malloc(sizeof(Document));
+			//Assignation of memory
 			aux->rightChild->document1=document1;
+			//Assignation of the following  left and  right to NULL
 			aux->rightChild->leftChild=NULL;
 			aux->rightChild->rightChild=NULL;
-			aux->leftChild=NULL;
+			//aux->leftChild=NULL;
+			//The Father is assigned to be the auxiliar
 			aux->rightChild->father=aux;
 			
 		}
 		
+		
+	}
+	
+	
 	return list;
+	
+}
 
-}
-}
 
 Document * documentModifier(Document * list, char id[]){
 		
@@ -721,57 +805,85 @@ void documentModifierTXT(Document * list,int value){
 	}
 }
 
-
 Document * documentTracker(void){
 	FILE * file;
-	//Open the file in reading mode
-	file= fopen("documents.txt","r");
-	//Creation of the variable type vertice
+	file = fopen("documents.txt","r");
 	Document * newDocument=NULL;
-	//Roam of every line of the file
-	while(feof(file)==0){
-		//Creation of variables 
+	
+	while (!feof(file)){
 		struct document document1;
 		char document[90];
 		int numero=1;
-		//Get the first line that is innecesary
 		fgets(document,90,file);
-		//Search of every element for the Data structure
-		while(numero<4){
-			//ID
-			if (numero==1){
-				fgets(document1.ID,10,file);
-				document1.ID[strlen(document1.ID) - 1] = '\0';
-			}
-			//Description
-			if(numero==2){
-				char rute[10];
-				
-				fgets(rute,10,file);
-				document1.rute=atoi(rute);
-			}
-			if(numero==3){
-				fgets(document1.description,90,file);
-				document1.description[strlen(document1.description) - 1] = '\0';
-			}
-			//Type of task 
-			if(numero==4){
-				fgets(document1.type,20,file);
-				document1.type[strlen(document1.type) - 1] = '\0';
-			}
-			numero++;
-		}
-		//Adder to the list
+		fgets(document1.ID,10,file);
+		char rute[10];
+		fgets(rute,10,file);
+		document1.rute=atoi(rute);
+		fgets(document1.description,90,file);
+		fgets(document1.type,90,file);
+		
 		newDocument = documentInserter(newDocument,document1);
-		
-	
+		if(newDocument!=NULL)printf("SUCCESS");
+			
 	}
-	//Close of the file when all the insertions are made
 	fclose(file);
-	
 	return newDocument;
-		
 }
+//Document * documentTracker(void){
+//	FILE * file;
+//	//Open the file in reading mode
+//	file= fopen("documents.txt","r");
+//	//Creation of the variable type vertice
+//	Document * newDocument=NULL;
+//	//Roam of every line of the file
+//	while(feof(file)==0){
+//		//Creation of variables 
+//		struct document document1;
+//		char document[90];
+//		int numero=1;
+//		//Get the first line that is innecesary
+//		fgets(document,90,file);
+//		//Search of every element for the Data structure
+//
+//		while(numero<5){
+//			//ID
+//			if (numero==1){
+//				fgets(document1.ID,10,file);
+//				document1.ID[strlen(document1.ID) - 1] = '\0';
+//				
+//			}
+//			//Description
+//			if(numero==2){
+//				char rute[10];
+//				
+//				fgets(rute,10,file);
+//				
+//				document1.rute=atoi(rute);
+//			}
+//			if(numero==3){
+//				fgets(document1.description,90,file);
+//				document1.description[strlen(document1.description) - 1] = '\0';
+//			}
+//			//Type of task 
+//			if(numero==4){
+//				fgets(document1.type,20,file);
+//				document1.type[strlen(document1.type) - 1] = '\0';
+//			}
+//			numero++;
+//		}
+//		//Adder to the list
+//		newDocument = documentInserter(newDocument,document1);
+//		
+//	
+//	}
+//	//Close of the file when all the insertions are made
+//	fclose(file);
+//	
+//	
+//	
+//	return newDocument;
+//		
+//}
 	
 
 Document * documentMenu(Document * document){
@@ -825,6 +937,7 @@ Document * documentMenu(Document * document){
 			document= documentModifier(document, ID);
 			//Calling the documentModifierTXT
 			documentModifierTXT(document,0);
+			//document= documentTracker();
 		}
 		//Validation the option 4 The document printer and the tree printer
 		if(value==4){
