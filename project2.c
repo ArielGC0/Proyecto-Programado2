@@ -15,6 +15,7 @@ struct vertice{
 	char typeOfTask[99];
 	char time[15];
 	char manager[15];
+	int effort;
 	
 };
 
@@ -25,7 +26,7 @@ struct document{
 	int rute;
 	char description[90];
 	char type[20];
-	int visited;
+	
 };
 //AVS Structure
 
@@ -50,12 +51,18 @@ Vertice{
 //Edge Nodo
 Edge{
 	Vertice * task;
-	int effort;
+	
 	struct edge * next;
 	
 };
 
-
+typedef struct graph2{
+	
+	int effort;
+	char time[15];
+	char typeTask[20];
+	struct graph2 * next;
+}Graph;
 
 
 //FUNCTIONS
@@ -74,6 +81,9 @@ Edge *  edgeInserter(Vertice *aux1, Vertice * aux2, Edge * newEdgeList);
 
 //Edge Viewer
 void visualizarGrafo(Vertice * verList, Edge * edgeList);
+
+//Graph Menu
+Edge * graphMenu(Vertice * vertList, Edge * edgeList);
 
 //Data Tracker;
 Vertice * dataTracker(void);
@@ -94,6 +104,25 @@ Document * documentModifier(Document * list, char id[]);
 
 //Document Menu
 Document * documentMenu(Document * document);
+
+//WorkFlowCreator 
+int GraphCreator(Vertice * verList);
+
+//
+typedef struct WBS{
+	struct vertice vertice1;
+	struct WBS * right;
+	struct WBS * left;
+	
+}WBS;
+
+
+//
+WBS * WBSCreator(WBS * list,struct vertice vertice1);
+//
+int MinimumExpansionTree(Vertice * vertList);
+//
+void WBSPrinter(WBS * list);
 
 int main(){
 //	Vertice * list =NULL;
@@ -117,8 +146,8 @@ int main(){
 //	list = documentModifier(list, "123");
 //	AVSPrinter(list);
 //	DocumentPrinter(list);
-	documentMenu(NULL);
-	
+	//documentMenu(NULL);
+	graphMenu(NULL, NULL);
 	
 	return 0;
 }
@@ -141,6 +170,8 @@ Vertice * verticeAdder(Vertice * list){
 	scanf(" %s",&vertice1.time);
 	printf("Type in the manager");
 	scanf("%s",&vertice1.manager);
+	printf("Type in the effort: ");
+	scanf("%d",&vertice1.effort);
 	
 	//Save the data in the txt
 	FILE *file;
@@ -149,7 +180,7 @@ Vertice * verticeAdder(Vertice * list){
 		printf("Connection Error: Impossible to connect to the txt \n ");
 		return list;
 	}
-	fputs("-------Task--------\n",file);
+	fputs("\n-------Task--------\n",file);
 	fputs(vertice1.ID,file);
 	fputs("\n",file);
 	fputs(vertice1.description,file);
@@ -160,6 +191,10 @@ Vertice * verticeAdder(Vertice * list){
 	fputs("\n",file);
 	fputs(vertice1.manager,file);
 	fputs("\n",file);
+	char effort[10];
+	//Convertion of a int to char 
+	sprintf(effort,"%d", vertice1.effort);
+	fputs(effort,file);
 	fclose(file);
 	
 	//Creation of the newVertice;
@@ -306,7 +341,7 @@ void visualizarGrafo(Vertice * verList, Edge * edgeList){
             }
         }
         printf("\n");
-        aux=aux->next;
+         aux=aux->next;
     }
     printf("\n");
 }
@@ -325,38 +360,38 @@ Vertice * dataTracker(void){
 		//Creation of variables 
 		struct vertice vertice1;
 		char task[90];
-		int numero=1;
 		//Get the first line that is innecesary
 		fgets(task,90,file);
 		//Search of every element for the Data structure
-		while(numero<6){
-			//ID
-			if (numero==1){
-				fgets(vertice1.ID,5,file);
-				vertice1.ID[strlen(vertice1.ID) - 1] = '\0';
-			}
-			//Description
-			if(numero==2){
-				fgets(vertice1.description,90,file);
-				vertice1.description[strlen(vertice1.description) - 1] = '\0';
-			}
-			//Type of task 
-			if(numero==3){
-				fgets(vertice1.typeOfTask,20,file);
-				vertice1.typeOfTask[strlen(vertice1.typeOfTask) - 1] = '\0';
-			}
-			//Time
-			if(numero==4){
-				fgets(vertice1.time,20,file);
-				vertice1.time[strlen(vertice1.time) - 1] = '\0';
-			}
-			//Manager
-			if(numero==5){
-				fgets(vertice1.manager,90,file);
-				vertice1.manager[strlen(vertice1.manager) - 1] = '\0';
-			}
-			numero++;
-		}
+		
+		//ID
+		fgets(vertice1.ID,5,file);
+		vertice1.ID[strlen(vertice1.ID) - 1] = '\0';
+		//Description
+			
+		fgets(vertice1.description,90,file);
+		vertice1.description[strlen(vertice1.description) - 1] = '\0';
+		
+		//Type of task
+		fgets(vertice1.typeOfTask,20,file);
+		vertice1.typeOfTask[strlen(vertice1.typeOfTask) - 1] = '\0';
+		
+			
+		//TIME
+		fgets(vertice1.time,20,file);
+		vertice1.time[strlen(vertice1.time) - 1] = '\0';
+		
+		//Manager
+			
+		fgets(vertice1.manager,90,file);
+		vertice1.manager[strlen(vertice1.manager) - 1] = '\0';
+		//EFFORT
+		char effort[10];
+		fgets(effort,10,file);
+		vertice1.effort=atoi(effort);
+		
+			
+		
 		//Adder to the list
 		newVertice = verticeAddertxt(newVertice,vertice1);
 		
@@ -460,6 +495,63 @@ Vertice * verticeModifier(Vertice * list){
 	
 	
 }
+
+
+
+
+//GRAPH MENU
+
+Edge * graphMenu(Vertice * vertList, Edge * edgeList){
+	printf("\n----------------------------\n");
+	printf("Welcome to the Graph System");
+	printf("\n----------------------------\n");
+	int number=0;
+	while(number==0){
+		int option;
+		printf("\n If you want to add a new Vertice please type in 1 ");
+		printf("\n If you want to modifie an existing vertice please type in 2 ");
+		printf("\n If you want to Assign the Edges type in 3");
+		printf("\n If you had a problem and need to restore the data please type in 4");
+		printf("\n If you want to print the Graph type in 5");
+		printf("\n If you want to create a Workflow please type in 6");
+		printf("\n If you want to see the WBS of the graph type in 7");
+		printf("\n If you want to exit type in 8 \n");
+		scanf("%d",&option);
+		
+		if(option==1){
+			vertList=verticeAdder(vertList);
+		}
+		if(option==2){
+			vertList=verticeModifier(vertList);
+		}
+		if(option==3){
+			edgeList=edgeAdder(edgeList,vertList);
+		}
+		if(option==4){
+			vertList= dataTracker();
+			printf("Data restore! \n");
+		}
+		if(option==5){
+			verticePrinter(vertList);
+			visualizarGrafo(vertList,edgeList);
+		}
+		if(option==6){
+			GraphCreator(vertList);
+		}
+		if(option==7){
+			MinimumExpansionTree(vertList);
+		
+		}
+		if(option==8){
+			break;
+		}
+	}
+	
+	
+	return edgeList;
+}
+
+
 
 
 
@@ -964,3 +1056,156 @@ Document * documentMenu(Document * document){
 	return document;
 	
 }
+
+
+
+//Validation of Requirmenet 3
+
+int GraphCreator(Vertice * verList){
+	char type[20];
+	printf("\n Welcome to the creator of rutes of work! \n");
+	printf("\n Type in  the initial Task:");
+	scanf("%s",&type);
+	
+	Vertice*auxVert= verList;
+    Edge* auxEdge;
+    //roam all the edge list to display the relations
+    int time=0;
+    int effort=0;
+    while(auxVert!=NULL){
+		if(strcmp(auxVert->vertice1.typeOfTask,type)==0)  {
+			char endTask[20];
+			printf("\n Type in  the end Task:");
+			scanf("%s",&endTask);
+			
+			printf("|%s|",auxVert->vertice1.typeOfTask);
+			printf("|Time: %s|",auxVert->vertice1.time);
+			time = time + atoi(auxVert->vertice1.time);
+			printf("|Effort: %d| ",auxVert->vertice1.effort);
+			effort= effort+ auxVert->vertice1.effort;
+			
+			
+			
+			if(auxVert->adjacent!=NULL){
+        	//Elements of the list of adjacent
+	            auxEdge=auxVert->adjacent;
+	            while(auxEdge!=NULL){ 
+	            	printf("-> |%s|",auxEdge->task->vertice1.typeOfTask);
+				    printf("|Time: %s|",auxEdge->task->vertice1.time);
+				    time = time + atoi(auxEdge->task->vertice1.time);
+				    printf("|Effort: %d| ",auxEdge->task->vertice1.effort);
+				    effort= effort+ auxEdge->task->vertice1.effort;
+	                
+	            	if(strcmp(auxEdge->task->vertice1.typeOfTask,endTask)==0){
+	            		printf("\n The total time to complete the workflow is: %d \n",time);
+	            		printf("\n The total effort to complete the workflow is: %d \n", effort);
+	            		return 0;
+					}
+					auxEdge=auxEdge->next;
+				    
+	            }
+        	}else{
+        		printf("\n The Graph is not created please add some elements \n ");
+        		return 1;
+			}
+			
+			
+		}
+	    
+        
+    	auxVert=auxVert->next;
+    }
+	
+	
+}
+
+
+//WBS MINIMUM EXPANSION TREE
+
+WBS * WBSCreator(WBS * list,struct vertice vertice1) {
+	WBS *aux;
+	if(list==NULL){
+		list= (WBS*)malloc(sizeof(WBS));
+		list->vertice1=vertice1;
+		list->right=NULL;
+		list->left=NULL;
+	}else{
+		if (atoi(vertice1.time) > atoi(list->vertice1.time)) {
+        // Tienes espacio a la derecha?
+        printf("Time %s",list->vertice1.time);
+	        if (list->right == NULL) {
+	            list->right = (WBS*)malloc(sizeof(WBS));
+				list->right->vertice1=vertice1;
+				list->right->right=NULL;
+				list->right->left=NULL;
+	        } else {
+	            
+	            WBSCreator(list->right, vertice1);
+	        }
+		
+		}else {
+        // Si no, a la izquierda
+        if (list->left == NULL) {
+        	list->left = (WBS*)malloc(sizeof(WBS));
+			list->left->vertice1=vertice1;
+			list->left->right=NULL;
+			list->left->left=NULL;
+            
+        } else {
+            // Si la izquierda ya está ocupada, recursividad ;)
+            WBSCreator(list->left, vertice1);
+        }
+    }
+    
+    }
+    printf("ENDS FUNCTION");
+    return list;
+}
+
+
+
+int MinimumExpansionTree(Vertice * vertList){
+	char id[10];
+	printf("\n Type in the ID where it is going to start the expansion tree: ");
+	scanf("%s",&id);
+	Vertice * aux;
+	Edge * auxEdge;
+	aux=vertList;
+	WBS * tree=NULL;
+	while(aux!=NULL){
+		if(strcmp(aux->vertice1.ID,id)==0){
+			tree=WBSCreator(tree,aux->vertice1);	
+		}                                    
+		 if(aux->adjacent!=NULL){
+				auxEdge = aux->adjacent;
+				while(auxEdge!=NULL){
+					tree=WBSCreator(tree,auxEdge->task->vertice1);
+					auxEdge=auxEdge->next;
+				}
+				break;
+			}else{
+				printf("No elements to show");
+				return 0;
+			}
+		aux=aux->next;
+	}
+	WBSPrinter(tree);
+	return 1;
+}
+
+
+void WBSPrinter(WBS * list) {
+    if (list != NULL) {
+        WBSPrinter(list->left);
+        printf("\n --------------WBS--------------- \n");
+        printf("%s \n", list->vertice1.typeOfTask);
+        printf("%s \n",list->vertice1.time);
+        printf("-------%d--------",list->vertice1.effort);
+        printf("\n ----------------------------- \n");
+        WBSPrinter(list->right);
+    }
+}
+
+
+
+
