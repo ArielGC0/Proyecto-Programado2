@@ -56,15 +56,36 @@ Edge{
 	
 };
 
-typedef struct graph2{
+//typedef struct graph2{
+//	
+//	int effort;
+//	char time[15];
+//	char typeTask[20];
+//	struct graph2 * next;
+//}Graph;
+
+//Resource structure
+struct resources{
+	char ID[10];
+	char name[10];
+	char type[10];
+	char capacity[10];
+	char cantity[10];
+	char manager[10];
 	
-	int effort;
-	char time[15];
-	char typeTask[20];
-	struct graph2 * next;
-}Graph;
-
-
+};
+//Asset data structura
+typedef struct assets{
+	struct resources resources1;
+	struct assets * next;
+}Assets;
+//WBS Structure
+typedef struct WBS{
+	struct vertice vertice1;
+	struct WBS * right;
+	struct WBS * left;
+	
+}WBS;
 //FUNCTIONS
 void verticePrinter(Vertice * list);
 
@@ -108,46 +129,29 @@ Document * documentMenu(Document * document);
 //WorkFlowCreator 
 int GraphCreator(Vertice * verList);
 
-//
-typedef struct WBS{
-	struct vertice vertice1;
-	struct WBS * right;
-	struct WBS * left;
-	
-}WBS;
 
-
-//
+//WBS Creator
 WBS * WBSCreator(WBS * list,struct vertice vertice1);
-//
+//Minimum Expansion Tree
 int MinimumExpansionTree(Vertice * vertList);
-//
+//WBS Printer
 void WBSPrinter(WBS * list);
-
+//Dikstra
+int Dijkstra(Vertice *list);
+//lenght function
+int len(Vertice * list);
+//search for the lower element
+Vertice * lowerElement(Vertice * vertList);
+//asset tracker
+Assets * assetTracker(void);
+//asset printer
+void assetPrinter(Assets * list);
+//asset adder
+Assets * assetsAdder(Assets * list,struct resources resources1);
+//main menu of functions
+void mainMenu(void);
 int main(){
-//	Vertice * list =NULL;
-//	int num=0;
-//	list= verticeAdder(list);
-//	list= verticeAdder(list);
-//    list= verticeAdder(list);
-//    //list= dataTracker();
-//    list= verticeModifier(list);
-//    list= dataTracker();
-//	Edge * edgeList = edgeAdder(NULL,list);
-//	edgeList = edgeAdder(edgeList,list);
-//	edgeList = edgeAdder(edgeList,list);
-//	verticePrinter(list);
-//	
-//	visualizarGrafo(list, edgeList);
-
-//	Document * 	list=NULL;
-//	list=documentAdder(list);
-//	list= documentAdder(list);
-//	list = documentModifier(list, "123");
-//	AVSPrinter(list);
-//	DocumentPrinter(list);
-	//documentMenu(NULL);
-	graphMenu(NULL, NULL);
+	mainMenu();
 	
 	return 0;
 }
@@ -162,7 +166,7 @@ Vertice * verticeAdder(Vertice * list){
 	scanf("%s",&vertice1.description);
 	printf("\n Descripcion: %s",vertice1.description);
 	printf("\n The type of tasks available are:");
-	printf(" operativetask\napprovaltask\ncontractsign\nmanagertask\nchanges.\n");
+	printf(" operativetask\n approvaltask\n contractsign\n managertask\n changes.\n");
 	printf("You can only use the tasks mencioned before, if you use other different the system wont work :D");
 	printf("\n Please Type in the type of task: ");
 	scanf(" %s",&vertice1.typeOfTask);
@@ -502,12 +506,16 @@ Vertice * verticeModifier(Vertice * list){
 //GRAPH MENU
 
 Edge * graphMenu(Vertice * vertList, Edge * edgeList){
+	//Prints
 	printf("\n----------------------------\n");
 	printf("Welcome to the Graph System");
 	printf("\n----------------------------\n");
+	//Number for the while
 	int number=0;
+	// Creation of the bucle for the menu
 	while(number==0){
 		int option;
+		//Options validation
 		printf("\n If you want to add a new Vertice please type in 1 ");
 		printf("\n If you want to modifie an existing vertice please type in 2 ");
 		printf("\n If you want to Assign the Edges type in 3");
@@ -515,34 +523,50 @@ Edge * graphMenu(Vertice * vertList, Edge * edgeList){
 		printf("\n If you want to print the Graph type in 5");
 		printf("\n If you want to create a Workflow please type in 6");
 		printf("\n If you want to see the WBS of the graph type in 7");
-		printf("\n If you want to exit type in 8 \n");
+		printf("\n If you want to see the fastest rute type in 8");
+		printf("\n If you want to exit type in 9 \n");
+		//Get the data
 		scanf("%d",&option);
-		
+		//Validation of options
 		if(option==1){
+			//call vertice adder
 			vertList=verticeAdder(vertList);
 		}
 		if(option==2){
+			// call of vertice modifier
 			vertList=verticeModifier(vertList);
 		}
 		if(option==3){
+			//call of edge adder
 			edgeList=edgeAdder(edgeList,vertList);
 		}
 		if(option==4){
+			//Getting the data back
+			//call the data tracker
 			vertList= dataTracker();
-			printf("Data restore! \n");
+			printf("\n Data restore! \n");
 		}
 		if(option==5){
+			//call the vertice printer
 			verticePrinter(vertList);
+			//call the graphPrinter
 			visualizarGrafo(vertList,edgeList);
 		}
 		if(option==6){
+			//call the graph creator
 			GraphCreator(vertList);
 		}
 		if(option==7){
+			//Call the minimum expansion tree
 			MinimumExpansionTree(vertList);
 		
 		}
 		if(option==8){
+			//Call the dijkstra
+			Dijkstra(vertList);
+		}
+		if(option==9){
+			//Exit the function
 			break;
 		}
 	}
@@ -622,35 +646,21 @@ Document * documentAdder(Document * list){
 		while(aux->leftChild!=NULL&& aux->rightChild!=NULL){
 			//validation of size of the rute to make the tree
 			//Smaller left
-			printf("The number is %d \n ",aux->document1.rute);
 			if(aux->document1.rute>document1.rute){
 				numero=0;
 				if(aux->leftChild==NULL)break;
 				aux=aux->leftChild;
-			
+			//otherwise right
 			}else {
+				//adding a number
 				numero=1;
 				if(aux->rightChild==NULL)break;
 				aux=aux->rightChild;
 			}
 			
 			
-//			if(aux->document1.rute>document1.rute){
-//				printf("Enters the second if");
-//				//We continue using the left side
-//				aux=aux->leftChild;
-//				//The number is assigned to 0, that means left side
-//				numero=0;
-//				printf("Es menor ");
-//			//Any other case right
-//			}else{
-//				//Keep using the right side
-//				aux=aux->rightChild;
-//				//The number is assigned to 1, that means right side
-//				numero=1;
-//				printf("Es mayor");
-//			}
 		}
+		//validation of the rute
 		if(aux->document1.rute>document1.rute){
 			numero=0;
 			printf("Es menor");
@@ -786,21 +796,6 @@ Document * documentInserter(Document * list, struct document document1){
 			}
 			
 			
-//			if(aux->document1.rute>document1.rute){
-//				printf("Enters the second if");
-//				//We continue using the left side
-//				aux=aux->leftChild;
-//				//The number is assigned to 0, that means left side
-//				numero=0;
-//				printf("Es menor ");
-//			//Any other case right
-//			}else{
-//				//Keep using the right side
-//				aux=aux->rightChild;
-//				//The number is assigned to 1, that means right side
-//				numero=1;
-//				printf("Es mayor");
-//			}
 		}
 		if(aux->document1.rute>document1.rute){
 			numero=0;
@@ -849,9 +844,12 @@ Document * documentInserter(Document * list, struct document document1){
 Document * documentModifier(Document * list, char id[]){
 		
 	    if (list != NULL) {
+	    	//Recursive call 
 	        documentModifier(list->leftChild,id);
 	        documentModifier(list->rightChild,id);
+	        //Checking if the list is null
 		     if(strcmp(list->document1.ID,id)==0){
+		     	//displaying of information
 				printf("---------------\n");
 				printf("Welcome to the modifier of Documents \n");
 				printf("You are about to modifie the Document with ID: %s \n",id);
@@ -864,7 +862,7 @@ Document * documentModifier(Document * list, char id[]){
 				printf("---------------\n");
 				
 			}
-			
+		//validation if the father is null 	
 		if(list->father==NULL){
 			return list;
 		}
@@ -873,7 +871,9 @@ Document * documentModifier(Document * list, char id[]){
 }
 
 void documentModifierTXT(Document * list,int value){
+	//validation if the list is not null
 	if(list!=NULL){
+		//type FILE
 		FILE * file;
 		if(value==0){
 			file = fopen("documents.txt","w");
@@ -1206,6 +1206,212 @@ void WBSPrinter(WBS * list) {
     }
 }
 
+int Dijkstra(Vertice * verList){
+	char type[20];
+	printf("\n Welcome to the ordenator of work \n");
+	printf("\n Type in  the initial Task:");
+	scanf("%s",&type);
+	
+	Vertice*auxVert= verList;
+    Edge* auxEdge;
+    //roam all the edge list to display the relations
+
+    while(auxVert!=NULL){
+		if(strcmp(auxVert->vertice1.typeOfTask,type)==0)  {
+			char endTask[20];
+			printf("\n Type in  the end Task:");
+			scanf("%s",&endTask);
+			
+			printf("|%s|",auxVert->vertice1.typeOfTask);
+			printf("|ID: %s|",auxVert->vertice1.ID);
+			printf("|Time: %s|",auxVert->vertice1.time);
+			printf("|Effort: %d| ",auxVert->vertice1.effort);
+			
+			
+			
+			if(auxVert->adjacent!=NULL){
+        	//Elements of the list of adjacent
+	            auxEdge=auxVert->adjacent;
+	            while(auxEdge!=NULL){ 
+	            	printf("-> |%s|",auxEdge->task->vertice1.typeOfTask);
+				    printf("|Time: %s|",auxEdge->task->vertice1.time);
+				    printf("|ID: %s|",auxEdge->task->vertice1.ID);
+				    printf("|Effort: %d| ",auxEdge->task->vertice1.effort);
+	                
+	            	if(strcmp(auxEdge->task->vertice1.typeOfTask,endTask)==0){
+	            		return 0;
+					}
+					auxEdge=auxEdge->next;
+				    
+	            }
+        	}else{
+        		printf("\n The Graph is not created please add some elements \n ");
+        		return 1;
+			}
+			
+			
+		}
+	    
+        
+    	auxVert=auxVert->next;
+    }
+	
+	
+}
+Assets * assetsAdder(Assets * list,struct resources resources1){
+	Assets * aux;
+	aux=list;
+	if(list==NULL){
+		list=(Assets*)malloc(sizeof(Assets));
+		list->resources1=resources1;
+		list->next=NULL;
+	}else{
+		while(aux->next!=NULL){
+			aux=aux->next;
+		}
+		aux->next=(Assets*)malloc(sizeof(Assets));
+		aux->next->resources1=resources1;
+		aux->next->next=NULL;
+	}
+	return list;
+	
+}
+
+
+Assets * assetCreator(Assets*asset){
+
+	int option=0;
+	printf("-----WELCOME TO THE ASSET CREATOR----------\n");
+	while(option==0){
+		int value;
+		printf("Type in 1 if you want to add an asset");
+		printf("Type in 2 if you want to exit");
+		scanf("%d",&value);
+		if(value==1){
+			
+			struct resources resource1;
+			printf("Type in the ID of the resource: ");
+			scanf("%s",&resource1.ID);
+			
+			printf("Type in the name of the resource: ");
+			scanf("%s",&resource1.name);
+			printf("Type in the type of the resource: ");
+			scanf("%s",&resource1.type);
+			printf("Type in the capacity of the resource: ");
+			scanf("%s",&resource1.capacity);
+			printf("Type in the cantity of the resource: ");
+			scanf("%s",&resource1.cantity);
+			printf("Type in the manager of the resource: ");
+			scanf("%s",&resource1.manager);
+			
+			FILE * file;
+			file = fopen("assets.txt","a");
+			fputs("\n-------ASSETS------ \n",file);
+			fputs(resource1.ID,file);
+			fputs("\n",file);
+			fputs(resource1.name,file);
+			fputs("\n",file);
+			fputs(resource1.type,file);
+			fputs("\n",file);
+			fputs(resource1.capacity,file);
+			fputs("\n",file);
+			fputs(resource1.cantity,file);
+			fputs("\n",file);
+			fputs(resource1.manager,file);
+			fclose(file);
+			
+			asset =assetsAdder(asset, resource1);
+		}
+		if(value==2){
+			break;
+		}
+		
+	}
+	
+	
+	return asset;
+	
+}
+
+
+void assetPrinter(Assets * list){
+	Assets * aux;
+	aux=list;
+	while(aux!=NULL){
+		printf("-----------------------------------");
+		printf("\n ID:%s",aux->resources1.ID);
+		printf("\n Name:%s",aux->resources1.name);
+		printf("\n Type:%s",aux->resources1.type);
+		printf("\n Capacity:%s",aux->resources1.capacity);
+		printf("\n Cantity:%s",aux->resources1.cantity);
+		printf("\n Manager:%s",aux->resources1.manager);
+		printf("-----------------------------------");
+		aux=aux->next;
+	}
+}
+
+
+Assets * assetTracker(void){
+	
+	FILE * file;
+	file = fopen("assets.txt","r");
+	Assets* asset=NULL;
+	
+	while (!feof(file)){
+		struct resources asset1;
+		char line1[10];
+		int numero=1;
+		fgets(line1,10,file);
+		fgets(asset1.ID,10,file);
+		fgets(asset1.name,10,file);
+		fgets(asset1.type,10,file);
+		fgets(asset1.capacity,10,file);
+		fgets(asset1.cantity,10,file);
+		fgets(asset1.manager,10,file);
+		
+		
+		asset = assetsAdder(asset,asset1);
+			
+	}
+	fclose(file);
+	return asset;
+	
+}
 
 
 
+void mainMenu(void){
+	printf("-------------- Welcome to the Work system-------------\n");
+	int option=0;
+	while(option==0){
+		int value;
+		printf("\n Type in 1 to enter the Graph menu ");
+		printf("\n To enter the Document menu type in 2");
+		printf("\n Type in 3 to enter the resource menu");
+		printf("\n If you want to exit type in 4");
+		scanf("%d",&value);
+		if(value==1){
+			graphMenu(NULL,NULL);
+		}
+		if(value==2){
+			documentMenu(NULL);
+		}
+		if(value==3){
+			Assets * asset =NULL;
+			printf("If you lost the information type in 1");
+			scanf("%d",&value);
+			if(value==1){
+				asset=assetTracker();
+			}
+			asset =assetCreator(asset);
+			assetPrinter(asset);
+			
+		}
+		if(value==4){
+			break;
+		}
+	}
+	
+	
+		
+}
