@@ -1,0 +1,40 @@
+----Task----
+ID:0
+--Info.Task--
+Name:plan a meeting
+Description:all the group must be present
+Type:management task
+Effort:2
+Time:25
+Owner:Karina Martinez
+------------------------ 
+----Task----
+ID:1
+--Info.Task--
+Name:Create Code
+Description:must be done in pairs
+Type:operative task
+Effort:8
+Time:480
+Owner:Laura Martinez
+------------------------ 
+----Task----
+ID:2
+--Info.Task--
+Name:Approve code
+Description:it can be wait-listed
+Type:approval task
+Effort:5
+Time:500
+Owner:Sofia
+------------------------ 
+----Task----
+ID:3
+--Info.Task--
+Name:Make changes to the code
+Description:must be done in pairs
+Type:changes
+Effort:8
+Time:490
+Owner:Luciana
+------------------------ 

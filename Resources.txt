@@ -1,0 +1,44 @@
+----Resources ID----
+ID:0
+----Task----
+ID:0
+--Info.Resources--
+Name:recorder
+Type:video
+Capacity:100
+Quantity:1
+Owner:Daniel
+------------------------ 
+----Resources ID----
+ID:1
+----Task----
+ID:1
+--Info.Resources--
+Name:computer
+Type:functional
+Capacity:200
+Quantity:2
+Owner:Nery
+------------------------ 
+----Resources ID----
+ID:2
+----Task----
+ID:2
+--Info.Resources--
+Name:projector
+Type:visual
+Capacity:150
+Quantity:1
+Owner:Raul
+------------------------ 
+----Resources ID----
+ID:3
+----Task----
+ID:3
+--Info.Resources--
+Name:computer
+Type:functional
+Capacity:200
+Quantity:2
+Owner:Nery
+------------------------ 
